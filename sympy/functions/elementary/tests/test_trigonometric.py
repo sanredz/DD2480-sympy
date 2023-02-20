@@ -12,7 +12,7 @@ from sympy.functions.elementary.exponential import (exp, log)
 from sympy.functions.elementary.hyperbolic import (acoth, asinh, atanh, cosh, coth, sinh, tanh)
 from sympy.functions.elementary.miscellaneous import sqrt
 from sympy.functions.elementary.trigonometric import (acos, acot, acsc, asec, asin, atan, atan2,
-                                                      cos, cot, csc, sec, sin, sinc, tan)
+                                                      cos, cot, csc, sec, sin, sinc, tan, BRANCHES)
 from sympy.functions.special.bessel import (besselj, jn)
 from sympy.functions.special.delta_functions import Heaviside
 from sympy.matrices.dense import Matrix
@@ -29,6 +29,7 @@ from sympy.core.relational import Ne, Eq
 from sympy.functions.elementary.piecewise import Piecewise
 from sympy.sets.setexpr import SetExpr
 from sympy.testing.pytest import XFAIL, slow, raises
+import pytest
 
 
 x, y, z = symbols('x y z')
@@ -2160,3 +2161,17 @@ def test_as_real_imag():
 def test_issue_18746():
     e3 = cos(S.Pi*(x/4 + 1/4))
     assert e3.period() == 8
+
+@pytest.fixture(autouse=True, scope="module")
+def manual_branch_coverage():
+    """
+    Checks the branch coverage from the BRANCHES variable in trigonometric.py
+    after all tests have been run.
+    Run pytest with -s flag to see the output
+    """
+    temp = None
+    yield temp
+    BRANCH_COV = len([taken for taken in BRANCHES if taken])/len(BRANCHES)
+    NOT_COVERED = [i for i in range(len(BRANCHES)) if not BRANCHES[i]] # indexes of branches not taken
+    print(f"\nBranch coverage: {BRANCH_COV}")
+    print(f"Branches not taken: {NOT_COVERED}")

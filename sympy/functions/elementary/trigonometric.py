@@ -24,6 +24,7 @@ from sympy.ntheory import factorint
 from sympy.polys.specialpolys import symmetric_poly
 from sympy.utilities.iterables import numbered_symbols
 
+BRANCHES = [False]*64
 
 ###############################################################################
 ########################## UTILITIES ##########################################
@@ -609,52 +610,90 @@ class cos(TrigonometricFunction):
         from sympy.calculus.accumulationbounds import AccumBounds
         from sympy.sets.setexpr import SetExpr
         if arg.is_Number:
+            BRANCHES[0] = True
             if arg is S.NaN:
+                BRANCHES[1] = True
                 return S.NaN
             elif arg.is_zero:
+                BRANCHES[2] = True
                 return S.One
             elif arg in (S.Infinity, S.NegativeInfinity):
+                BRANCHES[3] = True
                 # In this case it is better to return AccumBounds(-1, 1)
                 # rather than returning S.NaN, since AccumBounds(-1, 1)
                 # preserves the information that sin(oo) is between
                 # -1 and 1, where S.NaN does not do that.
                 return AccumBounds(-1, 1)
+            else:
+                BRANCHES[35] = True
 
         if arg is S.ComplexInfinity:
+            BRANCHES[4] = True
             return S.NaN
+        else:
+            BRANCHES[36] = True
 
-        if isinstance(arg, AccumBounds):
+        if isinstance(arg, AccumBounds):    
+            BRANCHES[5] = True
             return sin(arg + pi/2)
         elif isinstance(arg, SetExpr):
+            BRANCHES[6] = True
             return arg._eval_func(cls)
+        else:
+            BRANCHES[37] = True
 
         if arg.is_extended_real and arg.is_finite is False:
+            BRANCHES[7] = True
             return AccumBounds(-1, 1)
+        else:
+            BRANCHES[38] = True
 
         if arg.could_extract_minus_sign():
+            BRANCHES[8] = True
             return cls(-arg)
+        else:
+            BRANCHES[39] = True
 
         i_coeff = _imaginary_unit_as_coefficient(arg)
         if i_coeff is not None:
+            BRANCHES[9] = True
             from sympy.functions.elementary.hyperbolic import cosh
             return cosh(i_coeff)
+        else:
+            BRANCHES[40] = True
 
         pi_coeff = _pi_coeff(arg)
         if pi_coeff is not None:
+            BRANCHES[10] = True
             if pi_coeff.is_integer:
+                BRANCHES[11] = True
                 return (S.NegativeOne)**pi_coeff
+            else:
+                BRANCHES[41] = True
 
             if (2*pi_coeff).is_integer:
+                BRANCHES[12] = True
                 # is_even-case handled above as then pi_coeff.is_integer,
                 # so check if known to be not even
                 if pi_coeff.is_even is False:
+                    BRANCHES[13] = True
                     return S.Zero
+                else:
+                    BRANCHES[42] = True
+            else:
+                BRANCHES[43] = True
 
             if not pi_coeff.is_Rational:
+                BRANCHES[14] = True
                 narg = pi_coeff*pi
                 if narg != arg:
+                    BRANCHES[15] = True
                     return cls(narg)
+                else:
+                    BRANCHES[44] = True
                 return None
+            else:
+                BRANCHES[45] = True
 
             # cosine formula #####################
             # https://github.com/sympy/sympy/issues/6048
@@ -664,14 +703,21 @@ class cos(TrigonometricFunction):
             # calculated using a partial-fraction decomposition
             # by calling cos( X ).rewrite(sqrt)
             if pi_coeff.is_Rational:
+                BRANCHES[16] = True
                 q = pi_coeff.q
                 p = pi_coeff.p % (2*q)
                 if p > q:
+                    BRANCHES[17] = True
                     narg = (pi_coeff - 1)*pi
                     return -cls(narg)
+                else:
+                    BRANCHES[46] = True
                 if 2*p > q:
+                    BRANCHES[18] = True
                     narg = (1 - pi_coeff)*pi
                     return -cls(narg)
+                else:
+                    BRANCHES[47] = True
 
                 # If nested sqrt's are worse than un-evaluation
                 # you can require q to be in (1, 2, 3, 4, 6, 12)
@@ -679,69 +725,117 @@ class cos(TrigonometricFunction):
                 # expressions with 2 or fewer sqrt nestings.
                 table2 = _table2()
                 if q in table2:
+                    BRANCHES[19] = True
                     a, b = table2[q]
                     a, b = p*pi/a, p*pi/b
                     nvala, nvalb = cls(a), cls(b)
                     if None in (nvala, nvalb):
+                        BRANCHES[20] = True
                         return None
+                    else:
+                        BRANCHES[48] = True
                     return nvala*nvalb + cls(pi/2 - a)*cls(pi/2 - b)
+                else:
+                    BRANCHES[49] = True
 
                 if q > 12:
+                    BRANCHES[21] = True
                     return None
+                else:
+                    BRANCHES[50] = True
 
                 cst_table_some = {
                     3: S.Half,
                     5: (sqrt(5) + 1) / 4,
                 }
                 if q in cst_table_some:
+                    BRANCHES[22] = True
                     cts = cst_table_some[pi_coeff.q]
                     return chebyshevt(pi_coeff.p, cts).expand()
+                else:
+                    BRANCHES[51] = True
 
                 if 0 == q % 2:
+                    BRANCHES[23] = True
                     narg = (pi_coeff*2)*pi
                     nval = cls(narg)
                     if None == nval:
+                        BRANCHES[24] = True
                         return None
+                    else:
+                        BRANCHES[52] = True
                     x = (2*pi_coeff + 1)/2
                     sign_cos = (-1)**((-1 if x < 0 else 1)*int(abs(x)))
                     return sign_cos*sqrt( (1 + nval)/2 )
+                else:
+                    BRANCHES[53] = True
             return None
 
         if arg.is_Add:
+            BRANCHES[25] = True
             x, m = _peeloff_pi(arg)
             if m:
+                BRANCHES[26] = True
                 m = m*pi
                 return cos(m)*cos(x) - sin(m)*sin(x)
+            else:
+                BRANCHES[54] = True
+        else:
+            BRANCHES[55] = True
 
         if arg.is_zero:
+            BRANCHES[27] = True
             return S.One
+        else:
+            BRANCHES[56] = True
 
         if isinstance(arg, acos):
+            BRANCHES[28] = True
             return arg.args[0]
+        else:
+            BRANCHES[57] = True
 
         if isinstance(arg, atan):
+            BRANCHES[29] = True
             x = arg.args[0]
             return 1/sqrt(1 + x**2)
+        else:
+            BRANCHES[58] = True
 
         if isinstance(arg, atan2):
+            BRANCHES[30] = True
             y, x = arg.args
             return x/sqrt(x**2 + y**2)
+        else:
+            BRANCHES[59] = True
 
         if isinstance(arg, asin):
+            BRANCHES[31] = True
             x = arg.args[0]
             return sqrt(1 - x ** 2)
+        else:
+            BRANCHES[60] = True
 
         if isinstance(arg, acot):
+            BRANCHES[32] = True
             x = arg.args[0]
             return 1/sqrt(1 + 1/x**2)
+        else:
+            BRANCHES[61] = True
 
         if isinstance(arg, acsc):
+            BRANCHES[33] = True
             x = arg.args[0]
             return sqrt(1 - 1/x**2)
+        else:
+            BRANCHES[62] = True
 
         if isinstance(arg, asec):
+            BRANCHES[34] = True
             x = arg.args[0]
             return 1/x
+        else:
+            BRANCHES[63] = True
 
     @staticmethod
     @cacheit
