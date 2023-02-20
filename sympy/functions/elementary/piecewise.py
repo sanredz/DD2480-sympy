@@ -13,6 +13,7 @@ from sympy.utilities.misc import filldedent, func_name
 
 from itertools import product
 
+BRANCHES = [False]*39
 Undefined = S.NaN  # Piecewise()
 
 class ExprCondPair(Tuple):
@@ -1149,6 +1150,7 @@ def piecewise_simplify_arguments(expr, **kwargs):
     f1 = expr.args[0].cond.free_symbols
     args = None
     if len(f1) == 1 and not expr.atoms(Eq):
+        BRANCHES[0] = True
         x = f1.pop()
         # this won't return intervals involving Eq
         # and it won't handle symbols treated as
@@ -1161,73 +1163,122 @@ def piecewise_simplify_arguments(expr, **kwargs):
             except TypeError:
                 return False
         if ok:
+            BRANCHES[2] = True
             args = []
             covered = S.EmptySet
             from sympy.sets.sets import Interval
             for a, b, e, i in abe_:
+                BRANCHES[4] = True
                 c = expr.args[i].cond
                 incl_a = include(c, x, a)
                 incl_b = include(c, x, b)
                 iv = Interval(a, b, not incl_a, not incl_b)
                 cset = iv - covered
                 if not cset:
+                    BRANCHES[5] = True
                     continue
+                else:
+                    BRANCHES[6] = True
                 if incl_a and incl_b:
+                    BRANCHES[7] = True
                     if a.is_infinite and b.is_infinite:
+                        BRANCHES[8] = True
                         c = S.true
                     elif b.is_infinite:
+                        BRANCHES[9] = True
                         c = (x >= a)
                     elif a in covered or a.is_infinite:
+                        BRANCHES[10] = True
                         c = (x <= b)
                     else:
+                        BRANCHES[11] = True
                         c = And(a <= x, x <= b)
                 elif incl_a:
+                    BRANCHES[12] = True
                     if a in covered or a.is_infinite:
+                        BRANCHES[13] = True
                         c = (x < b)
                     else:
+                        BRANCHES[14] = True
                         c = And(a <= x, x < b)
                 elif incl_b:
+                    BRANCHES[15] = True
                     if b.is_infinite:
+                        BRANCHES[16] = True
                         c = (x > a)
                     else:
+                        BRANCHES[17] = True
                         c = (x <= b)
                 else:
+                    BRANCHES[18] = True
                     if a in covered:
+                        BRANCHES[19] = True
                         c = (x < b)
                     else:
+                        BRANCHES[20] = True
                         c = And(a < x, x < b)
                 covered |= iv
                 if a is S.NegativeInfinity and incl_a:
+                    BRANCHES[21] = True
                     covered |= {S.NegativeInfinity}
+                else:
+                    BRANCHES[22] = True
                 if b is S.Infinity and incl_b:
+                    BRANCHES[23] = True
                     covered |= {S.Infinity}
+                else:
+                    BRANCHES[24] = True
                 args.append((e, c))
             if not S.Reals.is_subset(covered):
+                BRANCHES[25] = True
                 args.append((Undefined, True))
+            else:
+                BRANCHES[26] = True
+        else:
+            BRANCHES[3] = True
+    else:
+        BRANCHES[1] = True
     if args is None:
+        BRANCHES[27] = True
         args = list(expr.args)
         for i in range(len(args)):
+            BRANCHES[28] = True
             e, c  = args[i]
             if isinstance(c, Basic):
+                BRANCHES[29] = True
                 c = simplify(c, **kwargs)
+            else:
+                BRANCHES[30] = True
             args[i] = (e, c)
+    else:
+        BRANCHES[31] = True
 
     # simplify expressions
     doit = kwargs.pop('doit', None)
     for i in range(len(args)):
+        BRANCHES[32] = True
         e, c  = args[i]
         if isinstance(e, Basic):
+            BRANCHES[33] = True
             # Skip doit to avoid growth at every call for some integrals
             # and sums, see sympy/sympy#17165
             newe = simplify(e, doit=False, **kwargs)
             if newe != e:
+                BRANCHES[34] = True
                 e = newe
+            else:
+                BRANCHES[35] = True
+        else:
+            BRANCHES[36] = True
         args[i] = (e, c)
+
 
     # restore kwargs flag
     if doit is not None:
+        BRANCHES[37] = True
         kwargs['doit'] = doit
-
+    else:
+        BRANCHES[38] = True
     return Piecewise(*args)
 
 
