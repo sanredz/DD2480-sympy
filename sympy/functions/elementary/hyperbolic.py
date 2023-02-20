@@ -16,6 +16,8 @@ from sympy.functions.elementary.trigonometric import (
     _imaginary_unit_as_coefficient)
 from sympy.polys.specialpolys import symmetric_poly
 
+BRANCHES = [False]*22
+
 
 def _rewrite_hyperbolics_as_exp(expr):
     return expr.xreplace({h: h.rewrite(exp)
@@ -1399,56 +1401,79 @@ class acosh(InverseHyperbolicFunction):
     @classmethod
     def eval(cls, arg):
         if arg.is_Number:
+            BRANCHES[0] = True
             if arg is S.NaN:
+                BRANCHES[1] = True
                 return S.NaN
             elif arg is S.Infinity:
+                BRANCHES[2] = True
                 return S.Infinity
             elif arg is S.NegativeInfinity:
+                BRANCHES[3] = True
                 return S.Infinity
             elif arg.is_zero:
+                BRANCHES[4] = True
                 return pi*I / 2
             elif arg is S.One:
+                BRANCHES[5] = True
                 return S.Zero
             elif arg is S.NegativeOne:
+                BRANCHES[6] = True
                 return pi*I
 
         if arg.is_number:
+            BRANCHES[7] = True
             cst_table = _acosh_table()
 
             if arg in cst_table:
+                BRANCHES[8] = True
                 if arg.is_extended_real:
+                    BRANCHES[9] = True
                     return cst_table[arg]*I
                 return cst_table[arg]
 
         if arg is S.ComplexInfinity:
+            BRANCHES[10] = True
             return S.ComplexInfinity
         if arg == I*S.Infinity:
+            BRANCHES[11] = True
             return S.Infinity + I*pi/2
         if arg == -I*S.Infinity:
+            BRANCHES[12] = True
             return S.Infinity - I*pi/2
 
         if arg.is_zero:
+            BRANCHES[13] = True
             return pi*I*S.Half
 
         if isinstance(arg, cosh) and arg.args[0].is_number:
+            BRANCHES[14] = True
             z = arg.args[0]
             if z.is_real:
+                BRANCHES[15] = True
                 return Abs(z)
             r, i = match_real_imag(z)
             if r is not None and i is not None:
+                BRANCHES[16] = True
                 f = floor(i/pi)
                 m = z - I*pi*f
                 even = f.is_even
                 if even is True:
+                    BRANCHES[17] = True
                     if r.is_nonnegative:
+                        BRANCHES[18] = True
                         return m
                     elif r.is_negative:
+                        BRANCHES[19] = True
                         return -m
                 elif even is False:
+                    BRANCHES[20] = True
                     m -= I*pi
                     if r.is_nonpositive:
+                        BRANCHES[21] = True
                         return -m
                     elif r.is_positive:
+                        BRANCHES[22] = True
                         return m
 
     @staticmethod

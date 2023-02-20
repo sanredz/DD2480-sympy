@@ -5,7 +5,7 @@ from sympy.core.singleton import S
 from sympy.core.symbol import (Symbol, symbols)
 from sympy.functions.elementary.complexes import (im, re)
 from sympy.functions.elementary.exponential import (exp, log)
-from sympy.functions.elementary.hyperbolic import (acosh, acoth, acsch, asech, asinh, atanh, cosh, coth, csch, sech, sinh, tanh)
+from sympy.functions.elementary.hyperbolic import (acosh, acoth, acsch, asech, asinh, atanh, cosh, coth, csch, sech, sinh, tanh, BRANCHES)
 from sympy.functions.elementary.miscellaneous import sqrt
 from sympy.functions.elementary.trigonometric import (acos, asin, cos, cot, sec, sin, tan)
 from sympy.series.order import O
@@ -13,6 +13,7 @@ from sympy.series.order import O
 from sympy.core.expr import unchanged
 from sympy.core.function import ArgumentIndexError
 from sympy.testing.pytest import raises
+import pytest
 
 
 def test_sinh():
@@ -1458,3 +1459,18 @@ def test_sign_assumptions():
     assert sech(p).is_positive is True
     assert coth(n).is_negative is True
     assert coth(p).is_positive is True
+
+
+@pytest.fixture(autouse=True, scope='module')
+def manual_branch_coverage():
+    """
+    Checks the branch coverage from the BRANCHES variable in trigonometric.py
+    after all tests have been run.
+    Run pytest with -s flag to see the output
+    """
+    temp = None
+    yield temp
+    BRANCH_COV = len([taken for taken in BRANCHES if taken])/len(BRANCHES)
+    NOT_COVERED = [i for i in range(len(BRANCHES)) if not BRANCHES[i]] # indexes of branches not taken
+    print(f"\nBranch coverage: {BRANCH_COV}")
+    print(f"Branches not taken: {NOT_COVERED}")
