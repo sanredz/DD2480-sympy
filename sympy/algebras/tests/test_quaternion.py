@@ -1,3 +1,4 @@
+import pytest
 from sympy.core.function import diff
 from sympy.core.function import expand
 from sympy.core.numbers import (E, I, Rational, pi)
@@ -355,6 +356,10 @@ def test_to_euler():
         euler_from_q = q.to_euler(seq)
         q_back = simplify(Quaternion.from_euler(euler_from_q, seq))
         assert q_back == q_normalized
+    
+def test_to_euler_exception():
+    with pytest.raises(ValueError):
+        Quaternion(0,0,0,0).to_euler('zxy')
 
 
 def test_to_euler_iss24504():
