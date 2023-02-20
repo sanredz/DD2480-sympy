@@ -1,0 +1,3 @@
+eval@607-744 elementary/trigonometric.py
+Branch coverage: 0.921875
+Branches not taken: [6, 7, 20, 24, 27]
