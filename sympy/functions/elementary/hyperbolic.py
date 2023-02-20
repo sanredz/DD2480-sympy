@@ -16,7 +16,7 @@ from sympy.functions.elementary.trigonometric import (
     _imaginary_unit_as_coefficient)
 from sympy.polys.specialpolys import symmetric_poly
 
-BRANCHES = [False]*22
+BRANCHES = [False]*36
 
 
 def _rewrite_hyperbolics_as_exp(expr):
@@ -1420,7 +1420,10 @@ class acosh(InverseHyperbolicFunction):
             elif arg is S.NegativeOne:
                 BRANCHES[6] = True
                 return pi*I
-
+            else: 
+                BRANCHES[24] = True
+        else:
+            BRANCHES[23] = True
         if arg.is_number:
             BRANCHES[7] = True
             cst_table = _acosh_table()
@@ -1430,21 +1433,33 @@ class acosh(InverseHyperbolicFunction):
                 if arg.is_extended_real:
                     BRANCHES[9] = True
                     return cst_table[arg]*I
-                return cst_table[arg]
+                else: 
+                    BRANCHES[26] = True
+                    return cst_table[arg]
+        else: 
+            BRANCHES[25] = True
 
         if arg is S.ComplexInfinity:
             BRANCHES[10] = True
             return S.ComplexInfinity
+        else: 
+            BRANCHES[26] = True
         if arg == I*S.Infinity:
             BRANCHES[11] = True
             return S.Infinity + I*pi/2
+        else: 
+            BRANCHES[27] = True
         if arg == -I*S.Infinity:
             BRANCHES[12] = True
             return S.Infinity - I*pi/2
+        else:
+            BRANCHES[28] = True
 
         if arg.is_zero:
             BRANCHES[13] = True
             return pi*I*S.Half
+        else:
+            BRANCHES[29] = True
 
         if isinstance(arg, cosh) and arg.args[0].is_number:
             BRANCHES[14] = True
@@ -1452,7 +1467,9 @@ class acosh(InverseHyperbolicFunction):
             if z.is_real:
                 BRANCHES[15] = True
                 return Abs(z)
-            r, i = match_real_imag(z)
+            else:
+                BRANCHES[31] = True
+                r, i = match_real_imag(z)
             if r is not None and i is not None:
                 BRANCHES[16] = True
                 f = floor(i/pi)
@@ -1466,6 +1483,8 @@ class acosh(InverseHyperbolicFunction):
                     elif r.is_negative:
                         BRANCHES[19] = True
                         return -m
+                    else:
+                        BRANCHES[35] = True
                 elif even is False:
                     BRANCHES[20] = True
                     m -= I*pi
@@ -1475,6 +1494,14 @@ class acosh(InverseHyperbolicFunction):
                     elif r.is_positive:
                         BRANCHES[22] = True
                         return m
+                    else:
+                        BRANCHES[34] = True
+                else:
+                    BRANCHES[33] = True
+            else:
+                BRANCHES[32] = True
+        else:
+            BRANCHES[30] = True
 
     @staticmethod
     @cacheit
