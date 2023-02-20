@@ -626,9 +626,11 @@ class cos(TrigonometricFunction):
         if isinstance(arg, AccumBounds):
             return sin(arg + pi/2)
         elif isinstance(arg, SetExpr):
+            # This branch is not covered in tests (#6 from manual branch coverage)
             return arg._eval_func(cls)
 
         if arg.is_extended_real and arg.is_finite is False:
+            # This branch is not covered in tests (#7 from manual branch coverage)
             return AccumBounds(-1, 1)
 
         if arg.could_extract_minus_sign():
@@ -683,6 +685,7 @@ class cos(TrigonometricFunction):
                     a, b = p*pi/a, p*pi/b
                     nvala, nvalb = cls(a), cls(b)
                     if None in (nvala, nvalb):
+                        # This branch is not covered in tests (#20 from manual branch coverage)
                         return None
                     return nvala*nvalb + cls(pi/2 - a)*cls(pi/2 - b)
 
@@ -701,6 +704,7 @@ class cos(TrigonometricFunction):
                     narg = (pi_coeff*2)*pi
                     nval = cls(narg)
                     if None == nval:
+                        # This branch is not covered in tests (#24 from manual branch coverage)
                         return None
                     x = (2*pi_coeff + 1)/2
                     sign_cos = (-1)**((-1 if x < 0 else 1)*int(abs(x)))
@@ -714,6 +718,7 @@ class cos(TrigonometricFunction):
                 return cos(m)*cos(x) - sin(m)*sin(x)
 
         if arg.is_zero:
+            # This branch is not covered in tests (#27 from manual branch coverage)
             return S.One
 
         if isinstance(arg, acos):
