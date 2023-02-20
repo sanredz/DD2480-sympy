@@ -20,6 +20,8 @@ from sympy.functions.elementary.miscellaneous import sqrt
 from sympy.ntheory import multiplicity, perfect_power
 from sympy.ntheory.factor_ import factorint
 
+BRANCHES = [False]*26
+
 # NOTE IMPORTANT
 # The series expansion code in this file is an important part of the gruntz
 # algorithm for determining limits. _eval_nseries has to return a generalized
@@ -808,56 +810,92 @@ class log(Function):
         force = hints.get('force', False)
         factor = hints.get('factor', False)
         if (len(self.args) == 2):
+            BRANCHES[0] = True
             return expand_log(self.func(*self.args), deep=deep, force=force)
+        else:
+            BRANCHES[20] = True
+            pass
         arg = self.args[0]
         if arg.is_Integer:
+            BRANCHES[1] = True
             # remove perfect powers
             p = perfect_power(arg)
             logarg = None
             coeff = 1
             if p is not False:
+                BRANCHES[2] = True
                 arg, coeff = p
                 logarg = self.func(arg)
+            else:
+                BRANCHES[21] = True
+                pass
             # expand as product of its prime factors if factor=True
             if factor:
+                BRANCHES[3] = True
                 p = factorint(arg)
                 if arg not in p.keys():
+                    BRANCHES[4] = True
                     logarg = sum(n*log(val) for val, n in p.items())
+                else:
+                    BRANCHES[22] = True
+                    pass
             if logarg is not None:
+                BRANCHES[5] = True
                 return coeff*logarg
+            else:
+                BRANCHES[23] = True
+                pass
         elif arg.is_Rational:
+            BRANCHES[6] = True
             return log(arg.p) - log(arg.q)
         elif arg.is_Mul:
+            BRANCHES[7] = True
             expr = []
             nonpos = []
             for x in arg.args:
+                BRANCHES[8] = True
                 if force or x.is_positive or x.is_polar:
+                    BRANCHES[9] = True
                     a = self.func(x)
                     if isinstance(a, log):
+                        BRANCHES[10] = True
                         expr.append(self.func(x)._eval_expand_log(**hints))
                     else:
+                        BRANCHES[11] = True
                         expr.append(a)
                 elif x.is_negative:
+                    BRANCHES[12] = True
                     a = self.func(-x)
                     expr.append(a)
                     nonpos.append(S.NegativeOne)
                 else:
+                    BRANCHES[13] = True
                     nonpos.append(x)
             return Add(*expr) + log(Mul(*nonpos))
         elif arg.is_Pow or isinstance(arg, exp):
+            BRANCHES[14] = True
             if force or (arg.exp.is_extended_real and (arg.base.is_positive or ((arg.exp+1)
                 .is_positive and (arg.exp-1).is_nonpositive))) or arg.base.is_polar:
+                BRANCHES[15] = True
                 b = arg.base
                 e = arg.exp
                 a = self.func(b)
                 if isinstance(a, log):
+                    BRANCHES[16] = True
                     return unpolarify(e) * a._eval_expand_log(**hints)
                 else:
+                    BRANCHES[17] = True
                     return unpolarify(e) * a
         elif isinstance(arg, Product):
+            BRANCHES[18] = True
             if force or arg.function.is_positive:
+                BRANCHES[19] = True
                 return Sum(log(arg.function), *arg.limits)
-
+            else:
+                BRANCHES[24] = True
+        else:
+            BRANCHES[25] = True
+            pass
         return self.func(arg)
 
     def _eval_simplify(self, **kwargs):

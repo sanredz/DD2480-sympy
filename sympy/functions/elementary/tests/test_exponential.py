@@ -8,7 +8,7 @@ from sympy.core.power import Pow
 from sympy.core.singleton import S
 from sympy.core.symbol import (Symbol, symbols)
 from sympy.functions.elementary.complexes import (adjoint, conjugate, re, sign, transpose)
-from sympy.functions.elementary.exponential import (LambertW, exp, exp_polar, log)
+from sympy.functions.elementary.exponential import (LambertW, exp, exp_polar, log, BRANCHES)
 from sympy.functions.elementary.hyperbolic import (cosh, sinh, tanh)
 from sympy.functions.elementary.miscellaneous import sqrt
 from sympy.functions.elementary.trigonometric import (cos, sin, tan)
@@ -22,7 +22,7 @@ from sympy.abc import x, y, z
 from sympy.core.expr import unchanged
 from sympy.core.function import ArgumentIndexError
 from sympy.testing.pytest import raises, XFAIL, _both_exp_pow
-
+import pytest
 
 @_both_exp_pow
 def test_exp_values():
@@ -804,3 +804,17 @@ def test_issue_18473():
     assert exp(x*log(sin(1/x)**2)).as_leading_term(x) == AccumBounds(0, 1)
     assert log(tan(1/x)**2).as_leading_term(x) == AccumBounds(-oo, oo)
     assert exp(2*x*(log(tan(1/x)**2))).as_leading_term(x) == AccumBounds(0, oo)
+
+@pytest.fixture(autouse=True, scope="module")
+def manual_branch_coverage():
+    """
+    Checks the branch coverage from the BRANCHES variable in exponential.py
+    after all tests have been run.
+    Run pytest with -s flag to see the output
+    """
+    temp = None
+    yield temp
+    BRANCH_COV = len([taken for taken in BRANCHES if taken])/len(BRANCHES)
+    NOT_COVERED = [i for i in range(len(BRANCHES)) if not BRANCHES[i]] # indexes of branches not taken
+    print(f"\nBranch coverage: {BRANCH_COV}")
+    print(f"Branches not taken: {NOT_COVERED}")
