@@ -1,3 +1,4 @@
+import pytest
 from sympy.concrete.summations import Sum
 from sympy.core.add import Add
 from sympy.core.basic import Basic
@@ -15,7 +16,7 @@ from sympy.functions.elementary.complexes import (Abs, adjoint, arg, conjugate, 
 from sympy.functions.elementary.exponential import (exp, log)
 from sympy.functions.elementary.miscellaneous import (Max, Min, sqrt)
 from sympy.functions.elementary.piecewise import (Piecewise,
-    piecewise_fold, piecewise_exclusive, Undefined, ExprCondPair)
+    piecewise_fold, piecewise_exclusive, Undefined, ExprCondPair, BRANCHES)
 from sympy.functions.elementary.trigonometric import (cos, sin)
 from sympy.functions.special.delta_functions import (DiracDelta, Heaviside)
 from sympy.functions.special.tensor_functions import KroneckerDelta
@@ -1604,3 +1605,17 @@ def test_piecewise__eval_is_meromorphic():
     assert f.is_meromorphic(x, 2) == True
     assert f.is_meromorphic(x, Symbol('a')) == None
     assert f.is_meromorphic(x, Symbol('a', real=True)) == None
+
+@pytest.fixture(autouse=True, scope="module")
+def manual_branch_coverage():
+    """
+    Checks the branch coverage from the BRANCHES variable in trigonometric.py
+    after all tests have been run.
+    Run pytest with -s flag to see the output
+    """
+    temp = None
+    yield temp
+    BRANCH_COV = len([taken for taken in BRANCHES if taken])/len(BRANCHES)
+    NOT_COVERED = [i for i in range(len(BRANCHES)) if not BRANCHES[i]] # indexes of branches not taken
+    print(f"\nBranch coverage: {BRANCH_COV}")
+    print(f"Branches not taken: {NOT_COVERED}")
