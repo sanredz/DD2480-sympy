@@ -1,3 +1,7 @@
 eval@607-744 elementary/trigonometric.py
 Branch coverage: 0.921875
 Branches not taken: [6, 7, 20, 24, 27]
+
+_eval_expand_log@806-861 elementary/exponential.py
+Branch coverage: 0.9615384615384616
+Branches not taken: [6]
