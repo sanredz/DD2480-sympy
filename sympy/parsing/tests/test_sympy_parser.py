@@ -60,6 +60,7 @@ def test_sympy_parser():
     for text, result in inputs.items():
         assert parse_expr(text) == result
 
+    #Test case when transformation is a string but invalid name
     raises(ValueError, lambda:
         parse_expr('x', transformations="not_all_or_implicit"))
 
