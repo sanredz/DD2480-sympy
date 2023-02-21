@@ -54,11 +54,14 @@ def test_sympy_parser():
             evaluate=False),
         'Limit(sin(x), x, 0, dir="-")': Limit(sin(x), x, 0, dir='-'),
         'Q.even(x)': Q.even(x),
-
+        
 
     }
     for text, result in inputs.items():
         assert parse_expr(text) == result
+
+    raises(ValueError, lambda:
+        parse_expr('x', transformations="not_all_or_implicit"))
 
     raises(TypeError, lambda:
         parse_expr('x', standard_transformations))
