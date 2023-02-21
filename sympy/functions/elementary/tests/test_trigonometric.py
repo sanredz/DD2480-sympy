@@ -2165,3 +2165,11 @@ def test_issue_18746():
 def test_cos_extended_real_not_finite():
     x = Symbol('x', extended_real=True, finite=False)
     assert cos(x) == AccumBounds(-1,1)
+
+
+def test_cos_setexpr():
+    """
+    Tests that cos of a SetExpr returns a SetExpr of the results of applying cos to the elements in the set
+    """
+    s = SetExpr(FiniteSet(0,pi/2))
+    assert cos(s) == SetExpr(FiniteSet(1,0))
