@@ -357,6 +357,8 @@ def test_to_euler():
         q_back = simplify(Quaternion.from_euler(euler_from_q, seq))
         assert q_back == q_normalized
     
+# Assert that a attempting to get Euler angles for zero-quaternion 
+# Yields a Value Error
 def test_to_euler_exception():
     with pytest.raises(ValueError):
         Quaternion(0,0,0,0).to_euler('zxy')
