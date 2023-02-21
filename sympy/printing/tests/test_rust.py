@@ -1,6 +1,7 @@
 from sympy.core import (S, pi, oo, symbols, Rational, Integer,
                         GoldenRatio, EulerGamma, Catalan, Lambda, Dummy,
                         Eq, Ne, Le, Lt, Gt, Ge, Mod)
+from sympy.core.function import Function
 from sympy.functions import (Piecewise, sin, cos, Abs, exp, ceiling, sqrt,
                              sign, floor)
 from sympy.logic import ITE
@@ -357,3 +358,18 @@ def test_matrix():
 def test_sparse_matrix():
     # gh-15791
     assert 'Not supported in Rust' in rust_code(SparseMatrix([[1, 2, 3]]))
+
+def test_unsupported_Function():
+    """
+     Test that an unsupported function is correctly printed in Rust code.
+     We define a DummyFunc, which is a function that is not supported in Rust.
+     We then use the rust_code function to print it and check that the string
+     "Not supported in Rust" appears in the result.
+    """
+
+    class DummyFunc(Function):
+        pass
+    
+    dummy_func = DummyFunc('x')
+    result = rust_code(dummy_func)
+    assert 'Not supported in Rust' in result
