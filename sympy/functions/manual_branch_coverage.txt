@@ -5,3 +5,11 @@ Branches not taken: [6, 7, 20, 24, 27]
 _eval_expand_log@806-861 elementary/exponential.py
 Branch coverage: 0.9615384615384616
 Branches not taken: [6]
+
+eval@1400-1452@.\sympy\functions\elementary\hyperbolic.py
+Branch coverage: 0.8333333333333334
+Branches not taken: [13, 19, 32, 33, 34, 35]
+
+piecewise_simplify_arguments@1145-1231@.\sympy\functions\elementary\piecewise.py
+Branch coverage: 0.8717948717948718
+Branches not taken: [3, 9, 30, 36, 38]
