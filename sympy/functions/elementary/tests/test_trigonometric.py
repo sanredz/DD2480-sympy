@@ -2163,6 +2163,9 @@ def test_issue_18746():
 
 
 def test_cos_extended_real_not_finite():
+    """
+    Tests that cos returns AccumBounds(-1,1) for a non-finite extended real number 
+    """
     x = Symbol('x', extended_real=True, finite=False)
     assert cos(x) == AccumBounds(-1,1)
 
