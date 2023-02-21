@@ -1,3 +1,4 @@
+from unittest import mock
 from sympy.core.containers import Tuple
 from sympy.combinatorics.generators import rubik_cube_generators
 from sympy.combinatorics.homomorphisms import is_isomorphic
@@ -1241,3 +1242,24 @@ def test_symmetricpermutationgroup():
     assert a.degree == 5
     assert a.order() == 120
     assert a.identity() == Permutation(4)
+
+def test_basic_transversals_calls_schreier_sims_if_needed():
+    """ 
+    Test that basic_transversals calls schreier_sims if _transversals is empty.
+    Uses the mock library to create a mock schreier_sims method that counts
+    its calls.
+    """ 
+    A = AlternatingGroup(4)
+    # Clear any cached transversals
+    A._transversals = []
+    # Mock the schreier_sims method to count its calls
+    A.schreier_sims = mock.Mock(wraps=A.schreier_sims)
+
+    # Check that schreier_sims is called once when _transversals is empty
+    transversals = A.basic_transversals
+    A.schreier_sims.assert_called_once()
+
+    # Check that schreier_sims is not called when _transversals is not empty
+    transversals2 = A.basic_transversals
+    A.schreier_sims.assert_called_once()
+    assert transversals == transversals2
