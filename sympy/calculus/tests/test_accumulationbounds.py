@@ -129,6 +129,9 @@ def test_AccumBounds_div():
     assert B(-oo, 1)/oo == B(-oo, 0)
     assert B(-oo, 1)/(-oo) == B(0, oo)
 
+    # Asserts that when dividing an AccumBounds that contains real number bounds with
+    # extended negative, it yields correct AccumBounds, i.e. B(0,0)
+    assert B(2,10)/(-oo) == B(0,0)
 
 def test_issue_18795():
     r = Symbol('r', real=True)
