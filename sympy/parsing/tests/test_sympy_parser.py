@@ -75,6 +75,8 @@ def test_sympy_parser():
     raises(TypeError, lambda: parse_expr('x', [], [], {}))
     raises(TypeError, lambda: parse_expr('x', [], [], {}))
 
+    #make sure tokens are not appended to result if only lambda is passed
+    assert lambda_notation(tokens=[(1, 'lambda')], local_dict={}, global_dict={}) == []
 
 def test_rationalize():
     inputs = {
