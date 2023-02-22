@@ -1,0 +1,10 @@
+Two test cases were added for parsing/sympy_parser.py.
+
+Before adding the test cases, the Coverage report was:
+parsing/sympy_parser.py         572 stmts, 35 miss, 94% cover
+
+After adding the test cases, the Coverage report was:
+parsing/sympy_parser.py:        572 stmts, 32 miss, 94% cover
+
+Thus, it can be concluded that the tests have covered three more statements, which represents an increase of .52 % 
+of test coverage, which is not shown as an increase by Coverage due to rounding. 
