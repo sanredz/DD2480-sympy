@@ -1428,6 +1428,8 @@ class acosh(InverseHyperbolicFunction):
             return S.Infinity - I*pi/2
 
         if arg.is_zero:
+            # This branch is not covered by tests (#13 from manual-branch-coverage)
+            # This also appears to be dead code since this requirement should be tested by line 1408
             return pi*I*S.Half
 
         if isinstance(arg, cosh) and arg.args[0].is_number:
@@ -1443,6 +1445,9 @@ class acosh(InverseHyperbolicFunction):
                     if r.is_nonnegative:
                         return m
                     elif r.is_negative:
+                        # This branch is not covered by tests (#19 from manual-branch-coverage)
+                        # To test this, acosh should be called with a cosh argument that takes an imaginary number
+                        # as argument, where the real part is a negative, even number
                         return -m
                 elif even is False:
                     m -= I*pi
@@ -1450,6 +1455,10 @@ class acosh(InverseHyperbolicFunction):
                         return -m
                     elif r.is_positive:
                         return m
+                # else-cases to these statements are not covered by tests but presumably
+                # there are no cases where r is neither positive nor negative
+                # making it impossible to test for them
+                # (i.e. the elifs could probably be replaced with elses)
 
     @staticmethod
     @cacheit

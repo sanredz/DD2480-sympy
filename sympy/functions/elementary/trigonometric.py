@@ -627,10 +627,12 @@ class cos(TrigonometricFunction):
             return sin(arg + pi/2)
         elif isinstance(arg, SetExpr):
             # This branch is not covered in tests (#6 from manual branch coverage)
+            # A test should address this by calling cos with a SetExpr argument
             return arg._eval_func(cls)
 
         if arg.is_extended_real and arg.is_finite is False:
             # This branch is not covered in tests (#7 from manual branch coverage)
+            # A test should address this by calling cos with a non-finite extended real number
             return AccumBounds(-1, 1)
 
         if arg.could_extract_minus_sign():
@@ -719,6 +721,7 @@ class cos(TrigonometricFunction):
 
         if arg.is_zero:
             # This branch is not covered in tests (#27 from manual branch coverage)
+            # (This appears to be dead code since this case should be covered by line 614)
             return S.One
 
         if isinstance(arg, acos):

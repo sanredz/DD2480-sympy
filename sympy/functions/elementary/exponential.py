@@ -826,6 +826,8 @@ class log(Function):
             if logarg is not None:
                 return coeff*logarg
         elif arg.is_Rational:
+            # This branch is not covered by tests (#6 from manual-branch-coverage)
+            # The argument to the function should be a rational number to cover this case
             return log(arg.p) - log(arg.q)
         elif arg.is_Mul:
             expr = []

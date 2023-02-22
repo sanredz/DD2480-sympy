@@ -1176,6 +1176,9 @@ def piecewise_simplify_arguments(expr, **kwargs):
                     if a.is_infinite and b.is_infinite:
                         c = S.true
                     elif b.is_infinite:
+                        # This case is not covered by tests (#9 from manual-branch-coverage)
+                        # To cover this, a and b should be included in the expression c
+                        # and b should be infinite
                         c = (x >= a)
                     elif a in covered or a.is_infinite:
                         c = (x <= b)
@@ -1204,12 +1207,15 @@ def piecewise_simplify_arguments(expr, **kwargs):
                 args.append((e, c))
             if not S.Reals.is_subset(covered):
                 args.append((Undefined, True))
+        # There appear to be no test cases for where 'ok' is false (#3 from manual-branch-coverage)
     if args is None:
         args = list(expr.args)
         for i in range(len(args)):
             e, c  = args[i]
             if isinstance(c, Basic):
                 c = simplify(c, **kwargs)
+            # The else-case here is not covered by any tests (#30 from manual-branch-coverade)
+            # To cover this, 'c' in the expression should not be a Basic instance
             args[i] = (e, c)
 
     # simplify expressions
