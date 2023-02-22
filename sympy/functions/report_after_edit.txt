@@ -7,4 +7,5 @@ Branches not taken: [20, 24, 27]
 
 This means that the branch coverage for the specific function was increased by about 3 % (1/32 to be specific).
 By inspecting the branch coverage reports (report_branch.txt and report_after_branch.txt), 
-one can see that the missed branches (in the entire trigonometric.py file) have been reduced from 104 to 102. 
+one can see that the missed branches (in the entire trigonometric.py file) have been reduced from 104 to 102, 
+although the percentage stays the same since Coverage measures the entire file, and not this individual function. 
